@@ -1,20 +1,21 @@
-import { env } from "./env";
+// config/config.ts
+import { serverEnv } from "./env.server";
 
 export const config = {
   app: {
-    nodeEnv: env.NODE_ENV,
-    port: Number(env.PORT),
-    authSecret: env.NEXTAUTH_SECRET,
-    baseUrl: env.BASE_URL,
-    isProd: env.NODE_ENV === "production",
-    isDev: env.NODE_ENV === "development",
+    nodeEnv: serverEnv.NODE_ENV,
+    port: Number(serverEnv.PORT),
+    authSecret: serverEnv.NEXTAUTH_SECRET,
+    baseUrl: serverEnv.BASE_URL,
+    isProd: serverEnv.NODE_ENV === "production",
+    isDev: serverEnv.NODE_ENV === "development",
   },
   db: {
-    url: env.DATABASE_URL,
-    directUrl: env.DIRECT_URL,
+    url: serverEnv.DATABASE_URL,
+    directUrl: serverEnv.DIRECT_URL,
   },
   google: {
-    id: env.GOOGLE_CLIENT_ID,
-    secret: env.GOOGLE_CLIENT_SECRET,
+    id: serverEnv.GOOGLE_CLIENT_ID,
+    secret: serverEnv.GOOGLE_CLIENT_SECRET,
   },
 };
