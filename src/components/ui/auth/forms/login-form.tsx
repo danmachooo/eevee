@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,36 +12,17 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { GoogleButton } from "../shared/google-button";
 import { PasswordInput } from "../shared/password-input";
+import { useLoginForm } from "@/features/auth/hooks/useLoginForm";
 
 export function LoginForm() {
-  const [formData, setFormData] = useState({ email: "", password: "" });
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
-    setFormData((prev) => ({ ...prev, [id]: value }));
-    if (errors[id]) setErrors((prev) => ({ ...prev, [id]: "" }));
-  };
-
-  const validate = () => {
-    const newErrors: Record<string, string> = {};
-    if (!formData.email) newErrors.email = "Email is required";
-    if (!formData.password) newErrors.password = "Password is required";
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validate()) return;
-    setIsSubmitting(true);
-    try {
-      console.log("Login submitted:", formData);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  const {
+    formData,
+    errors,
+    isSubmitting,
+    serverError,
+    handleChange,
+    handleSubmit,
+  } = useLoginForm();
 
   return (
     <>
@@ -92,6 +72,10 @@ export function LoginForm() {
               error={errors.password}
             />
           </div>
+
+          {serverError && (
+            <p className="text-sm text-red-500 text-center">{serverError}</p>
+          )}
 
           <Button type="submit" className="w-full" disabled={isSubmitting}>
             {isSubmitting ? "Logging in..." : "Login"}

@@ -1,8 +1,5 @@
 "use client";
 
-import type React from "react";
-
-import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,72 +12,17 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { GoogleButton } from "../shared/google-button";
 import { PasswordInput } from "../shared/password-input";
+import { useRegistrationForm } from "@/features/auth/hooks/useRegistrationForm";
 
 export function RegistrationForm() {
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
-    setFormData((prev) => ({ ...prev, [id]: value }));
-    if (errors[id]) setErrors((prev) => ({ ...prev, [id]: "" }));
-  };
-
-  const validate = () => {
-    const newErrors: Record<string, string> = {};
-
-    if (!formData.firstName) {
-      newErrors.firstName = "First name is required";
-    }
-
-    if (!formData.lastName) {
-      newErrors.lastName = "Last name is required";
-    }
-
-    if (!formData.email) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Email is invalid";
-    }
-
-    if (!formData.password) {
-      newErrors.password = "Password is required";
-    } else if (formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
-    }
-
-    if (!formData.confirmPassword) {
-      newErrors.confirmPassword = "Please confirm your password";
-    } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validate()) return;
-    setIsSubmitting(true);
-    try {
-      console.log("Registration submitted:", {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-      });
-      // Add your registration logic here
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  const {
+    formData,
+    errors,
+    isSubmitting,
+    serverError,
+    handleChange,
+    handleSubmit,
+  } = useRegistrationForm();
 
   return (
     <>
@@ -166,6 +108,10 @@ export function RegistrationForm() {
               placeholder="Confirm your password"
             />
           </div>
+
+          {serverError && (
+            <p className="text-sm text-red-500 text-center">{serverError}</p>
+          )}
 
           <Button type="submit" className="w-full" disabled={isSubmitting}>
             {isSubmitting ? "Creating account..." : "Sign up"}
